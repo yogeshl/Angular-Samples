@@ -1,0 +1,85 @@
+<!DOCTYPE HTML>
+<html ng-app="mainApp">
+
+<head>
+    <script src="bower_components/angular/angular.js"></script>
+</head>
+
+<body ng-controller = "FileController">
+     <input type = "file" file-model = "myFile"/>
+     <button ng-click = "uploadFile()">Upload</button>
+</body>
+
+</html>
+
+<script>
+    var mainApp = angular.module('mainApp',[]);
+    
+    mainApp.directive('fileModel',['$parse',function($parse){
+       
+        var directive ={};
+
+        directive.restrict ='A';
+
+        directive.compile = function(element, attributes){
+
+            var linkFunction = function($scope, element,attributes){
+                   
+                  //$parse - Converts Angular expression into a function. 
+                  //Access the Scope expression
+                  var model = $parse(attributes.fileModel);
+                  var modelSetter = model.assign;
+
+                  element.bind('change',function(){
+                      $scope.$apply(function(){
+
+                          modelSetter($scope, element[0].files[0]);
+                      });
+
+                  });
+
+            }
+
+            return linkFunction;
+
+        }
+ 
+       return directive;
+
+    }]); 
+
+
+    mainApp.service('fileUpload',['$http',function($http){
+
+          this.upload = function(file, url){
+
+               var fd = new FormData();
+               fd.append('file',file);
+
+               $http.post(url, fd, {
+                   transformRequest:angular.identity,
+                   headers:{'Content-Type':undefined}
+               }) 
+               .success(function(){
+
+               })
+               .error(function(){
+
+               })
+
+          }
+
+    }]);
+
+    mainApp.controller('FileController', ['$scope', 'fileUpload', function($scope, fileUpload){
+            $scope.uploadFile = function(){
+               var file = $scope.myFile;
+               
+               console.log('file is ' );
+               console.dir(file);
+               
+               fileUpload.upload(file, "/fileUpload");
+            };
+         }]);
+
+</script>

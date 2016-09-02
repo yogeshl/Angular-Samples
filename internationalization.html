@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html ng-app="mainApp">
+
+<head>
+    <script src="bower_components/angular/angular.js"></script>
+</head>
+
+<body >
+      
+      <div ng-controller = "StudentController">
+         {{fees | currency }}  <br/><br/>
+         {{admissiondate | date }}  <br/><br/>
+         {{rollno | number }}
+      </div>
+</body>
+
+</html>
+
+<script>
+    /*AngularJS supports inbuilt internationalization for three types of filters currency, date and numbers.
+     We only need to incorporate corresponding js according to locale of the country. 
+    By default it handles the locale of the browser. */
+    var mainApp = angular.module('mainApp',[]);
+    
+    mainApp.controller('StudentController', function($scope) {
+            $scope.fees = 100;
+            $scope.admissiondate  = new Date();
+            $scope.rollno = 123.45;
+         });
+
+    </script>
